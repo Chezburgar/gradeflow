@@ -1,8 +1,18 @@
 # 💧 GradeFlow
 
+**Live: https://chezburgar.github.io/gradeflow/**
+
 A faster, prettier, **fully customizable** front-end for Synergy **StudentVUE** — with a built-in **agenda book** for students. A ground-up redesign of GradeMelon that keeps every feature and adds a lot more.
 
 > Unofficial and not affiliated with Edupoint or StudentVUE. It talks to the same public StudentVUE service your school already uses.
+
+## Deployment
+
+GradeFlow is a fully static site (Next.js `output: export`) deployed to **GitHub Pages**
+via the workflow in [.github/workflows/deploy.yml](.github/workflows/deploy.yml). Because there
+is no server, all StudentVUE requests are relayed (browser → CORS-enabled StudentVUE proxy using
+`ProcessWebServiceRequestMultiWeb`), which also works for districts that block the legacy API
+directly (error UPD5304). Sign in with your **Student ID + StudentVUE password**.
 
 ## Features
 
