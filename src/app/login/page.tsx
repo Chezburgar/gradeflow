@@ -20,7 +20,7 @@ import { Button, Field, Input } from "@/components/ui";
 import { useSession } from "@/store/session";
 import { useHydrated } from "@/lib/use-hydrated";
 import { DEMO_STUDENT } from "@/lib/studentvue/demo";
-import { svue } from "@/lib/studentvue/relay-client";
+import { findDistrictsByZip, svue } from "@/lib/studentvue/relay-client";
 import { searchDistricts } from "@/lib/districts";
 import { asset } from "@/lib/utils";
 import type { District } from "@/lib/studentvue/types";
@@ -55,16 +55,33 @@ export default function LoginPage() {
     if (hydrated && session.loggedIn) router.replace("/dashboard");
   }, [hydrated, session.loggedIn, router]);
 
-  function lookup(e: React.FormEvent) {
+  async function lookup(e: React.FormEvent) {
     e.preventDefault();
     setLookupError("");
     setLookupLoading(true);
-    const results = searchDistricts(zip);
-    if (!results.length) {
-      setLookupError("No districts found. Try a district name or ZIP, or enter your URL manually.");
+    setDistricts([]);
+    try {
+      const q = zip.trim();
+      let results: District[] = [];
+      // Real ZIP-proximity lookup (Edupoint allows browser CORS); fall back to
+      // the bundled directory for names or if the lookup returns nothing.
+      if (/^\d{5}$/.test(q)) {
+        try {
+          results = await findDistrictsByZip(q);
+        } catch {
+          /* fall back below */
+        }
+      }
+      if (results.length === 0) results = searchDistricts(q);
+      if (results.length === 0) {
+        setLookupError(
+          "No districts found. Try a district name or ZIP, or enter your URL manually.",
+        );
+      }
+      setDistricts(results);
+    } finally {
+      setLookupLoading(false);
     }
-    setDistricts(results);
-    setLookupLoading(false);
   }
 
   function pickDistrict(d: District) {

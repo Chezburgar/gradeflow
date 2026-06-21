@@ -2,13 +2,14 @@ import { XMLParser } from "fast-xml-parser";
 import {
   parseAttendance,
   parseCalendar,
+  parseDistricts,
   parseDocumentContent,
   parseDocuments,
   parseGradebook,
   parseSchedule,
   parseStudentInfo,
 } from "./parse";
-import type { Credentials } from "./types";
+import type { Credentials, District } from "./types";
 
 /**
  * Browser-side StudentVUE client. The app is a static site (GitHub Pages), so
@@ -135,6 +136,56 @@ async function relayRequest(
     throw new SvueClientError(isAuth ? "Invalid username or password." : msg, isAuth ? "auth" : "svue");
   }
   return doc;
+}
+
+/**
+ * Look up districts by ZIP via Edupoint's public directory. This endpoint sends
+ * `Access-Control-Allow-Origin: *`, so the browser can call it directly (no relay).
+ */
+export async function findDistrictsByZip(zip: string): Promise<District[]> {
+  const endpoint = "https://support.edupoint.com/Service/HDInfoCommunication.asmx";
+  const key = "5E4B7859-B805-474B-A833-FDB15D205D40";
+  const paramStr = `<Parms><Key>${key}</Key><MatchToDistrictZipCode>${escapeXml(zip)}</MatchToDistrictZipCode></Parms>`;
+  const envelope =
+    `<?xml version="1.0" encoding="utf-8"?>` +
+    `<soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ` +
+    `xmlns:xsd="http://www.w3.org/2001/XMLSchema" ` +
+    `xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">` +
+    `<soap:Body>` +
+    `<ProcessWebServiceRequest xmlns="http://edupoint.com/webservices/">` +
+    `<userID>EdupointDistrictInfo</userID><password>Edup01nt</password>` +
+    `<skipLoginLog>1</skipLoginLog><parent>0</parent>` +
+    `<webServiceHandleName>HDInfoServices</webServiceHandleName>` +
+    `<methodName>GetMatchingDistrictList</methodName>` +
+    `<paramStr>${escapeXml(paramStr)}</paramStr>` +
+    `</ProcessWebServiceRequest>` +
+    `</soap:Body></soap:Envelope>`;
+
+  let res: Response;
+  try {
+    res = await fetch(endpoint, {
+      method: "POST",
+      headers: { "Content-Type": "text/xml; charset=utf-8" },
+      body: envelope,
+      signal: AbortSignal.timeout(20000),
+    });
+  } catch {
+    throw new SvueClientError("Couldn't reach the district directory.", "network");
+  }
+  if (!res.ok) throw new SvueClientError(`District lookup failed (${res.status}).`, "proxy");
+
+  const parsed = parser.parse(await res.text()) as Record<string, unknown>;
+  const env =
+    (parsed["soap:Envelope"] as Record<string, unknown>) ??
+    (parsed["Envelope"] as Record<string, unknown>);
+  const body =
+    (env?.["soap:Body"] as Record<string, unknown>) ??
+    (env?.["Body"] as Record<string, unknown>);
+  const resp = body?.["ProcessWebServiceRequestResponse"] as Record<string, unknown> | undefined;
+  const inner = resp?.["ProcessWebServiceRequestResult"];
+  if (inner == null) return [];
+  const doc = parser.parse(String(inner)) as Record<string, unknown>;
+  return parseDistricts(doc);
 }
 
 export const svue = {
