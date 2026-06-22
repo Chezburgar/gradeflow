@@ -7,7 +7,7 @@ export const metadata: Metadata = { title: "FAQ" };
 const FAQS = [
   {
     q: "What is GradeFlow?",
-    a: "A faster, prettier, fully customizable front-end for Synergy StudentVUE. It shows the same grades, attendance, schedule, and documents your district already publishes — plus a built-in agenda book.",
+    a: "A faster, prettier, fully customizable front-end for Synergy StudentVUE. It shows the same grades, attendance, schedule, and documents your district already publishes — plus a what-if calculator and semester grades.",
   },
   {
     q: "Is this official / affiliated with my school?",
@@ -22,8 +22,8 @@ const FAQS = [
     a: "StudentVUE has no login token — your username and password must be sent with every request, so they are stored locally in your browser to keep you signed in. They are sent only to your district's server (proxied through GradeFlow to avoid browser CORS limits) and never to anyone else. See the Privacy page for details.",
   },
   {
-    q: "What is the agenda book?",
-    a: "A personal planner for homework, tests, projects, and reminders. Add items by hand, or import upcoming assignments straight from your gradebook. Everything is stored on your device.",
+    q: "How do semester grades work?",
+    a: "GradeFlow loads every marking period and shows your exact semester average right next to each quarter grade — automatically, no setup needed.",
   },
   {
     q: "What's the what-if calculator?",

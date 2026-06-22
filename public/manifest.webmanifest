@@ -1,7 +1,7 @@
 {
   "name": "GradeFlow",
   "short_name": "GradeFlow",
-  "description": "A cooler, customizable StudentVUE grade viewer with a built-in student agenda book.",
+  "description": "A cooler, customizable StudentVUE grade viewer with a what-if calculator and semester grades.",
   "start_url": ".",
   "scope": ".",
   "display": "standalone",

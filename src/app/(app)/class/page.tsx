@@ -7,8 +7,6 @@ import { AnimatePresence, motion } from "framer-motion";
 import {
   ArrowLeft,
   Calculator,
-  CalendarPlus,
-  Check,
   Layers,
   Mail,
   Plus,
@@ -31,7 +29,6 @@ import {
   Skeleton,
   Toggle,
 } from "@/components/ui";
-import { useAgenda, type AgendaType } from "@/store/agenda";
 import {
   computeCourse,
   type CustomCategory,
@@ -44,16 +41,8 @@ import {
   letterFromPercent,
   parseDate,
   relativeDay,
-  toISODate,
 } from "@/lib/utils";
 import type { Assignment, Course } from "@/lib/studentvue/types";
-
-function agendaTypeFor(t: string): AgendaType {
-  const s = t.toLowerCase();
-  if (s.includes("test") || s.includes("exam") || s.includes("quiz")) return "test";
-  if (s.includes("project") || s.includes("essay") || s.includes("lab")) return "project";
-  return "homework";
-}
 
 export default function ClassPage() {
   return (
@@ -98,14 +87,12 @@ function ClassDetailInner() {
 }
 
 function CourseDetail({ course }: { course: Course }) {
-  const addAgenda = useAgenda((s) => s.add);
   const semester = useSemester(course.id);
   const [whatIf, setWhatIf] = useState(false);
   const [overrides, setOverrides] = useState<Record<string, Override>>({});
   const [hypos, setHypos] = useState<Hypothetical[]>([]);
   const [customCategories, setCustomCategories] = useState<CustomCategory[]>([]);
   const [weightOverrides, setWeightOverrides] = useState<Record<string, number>>({});
-  const [added, setAdded] = useState<Set<string>>(new Set());
 
   const live = useMemo(
     () =>
@@ -159,21 +146,6 @@ function CourseDetail({ course }: { course: Course }) {
     Object.keys(overrides).length > 0 ||
     customCategories.length > 0 ||
     Object.keys(weightOverrides).length > 0;
-
-  function addToAgenda(a: Assignment) {
-    const d = parseDate(a.dueDate || a.date);
-    addAgenda({
-      title: a.name,
-      course: course.title,
-      type: agendaTypeFor(a.type),
-      due: d ? toISODate(d) : toISODate(new Date()),
-      notes: "",
-      priority: "normal",
-      source: "import",
-      sourceKey: `gb-${course.id}-${a.id}`,
-    });
-    setAdded((s) => new Set(s).add(a.id));
-  }
 
   return (
     <div>
@@ -314,8 +286,6 @@ function CourseDetail({ course }: { course: Course }) {
                   whatIf={whatIf}
                   override={overrides[a.id]}
                   onChange={(p) => setOverride(a.id, p)}
-                  onAddAgenda={() => addToAgenda(a)}
-                  added={added.has(a.id)}
                 />
               ))}
 
@@ -357,15 +327,11 @@ function AssignmentRow({
   whatIf,
   override,
   onChange,
-  onAddAgenda,
-  added,
 }: {
   a: Assignment;
   whatIf: boolean;
   override?: Override;
   onChange: (p: Partial<Override>) => void;
-  onAddAgenda: () => void;
-  added: boolean;
 }) {
   const earned = override?.earned ?? a.pointsEarned;
   const possible = override?.possible ?? a.pointsPossible;
@@ -418,14 +384,9 @@ function AssignmentRow({
           <MarkPill percent={pct} size="sm" />
         </div>
       ) : (
-        <button
-          onClick={onAddAgenda}
-          disabled={added}
-          className="inline-flex items-center gap-1.5 rounded-full bg-accent-soft px-3 py-1 text-xs font-medium text-accent transition-colors hover:brightness-110 disabled:opacity-60"
-        >
-          {added ? <Check size={13} /> : <CalendarPlus size={13} />}
-          {added ? "Added" : "Agenda"}
-        </button>
+        <span className="rounded-full bg-surface-2 px-3 py-1 text-xs font-medium text-muted">
+          {a.pointsPossible != null ? `— / ${a.pointsPossible}` : "Not graded"}
+        </span>
       )}
     </div>
   );

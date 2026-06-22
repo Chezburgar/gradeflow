@@ -18,8 +18,8 @@ const SECTIONS = [
     p: "Grades, attendance, schedule, and documents are fetched live from StudentVUE when you open a page and held only in memory for that session. They are not saved to any server.",
   },
   {
-    h: "Your agenda & settings",
-    p: "Agenda items and all customization preferences are stored locally in your browser. Clearing your browser data, or signing out, removes them. They are never uploaded.",
+    h: "Your settings",
+    p: "All your customization preferences are stored locally in your browser. Clearing your browser data, or signing out, removes them. They are never uploaded.",
   },
   {
     h: "Demo mode",

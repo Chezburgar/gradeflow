@@ -72,19 +72,12 @@ export const DENSITIES: { id: Density; label: string }[] = [
   { id: "spacious", label: "Spacious" },
 ];
 
-export type WidgetId =
-  | "gpa"
-  | "courses"
-  | "upcoming"
-  | "agenda"
-  | "attendance"
-  | "trend";
+export type WidgetId = "gpa" | "courses" | "upcoming" | "attendance" | "trend";
 
 export const ALL_WIDGETS: { id: WidgetId; label: string; description: string }[] = [
   { id: "gpa", label: "GPA & Averages", description: "Overall GPA ring and term average" },
   { id: "courses", label: "Course Grades", description: "Live grade for every class" },
-  { id: "upcoming", label: "Upcoming Work", description: "Assignments & agenda items due soon" },
-  { id: "agenda", label: "Agenda Preview", description: "Today + tomorrow from your agenda book" },
+  { id: "upcoming", label: "Upcoming Work", description: "Assignments due soon" },
   { id: "attendance", label: "Attendance", description: "Absences and tardies at a glance" },
   { id: "trend", label: "Grade Trend", description: "Average across classes as a chart" },
 ];

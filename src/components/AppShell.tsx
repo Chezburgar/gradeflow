@@ -12,7 +12,6 @@ import {
   LayoutDashboard,
   LogOut,
   Menu,
-  NotebookPen,
   RefreshCw,
   Settings,
   Sparkles,
@@ -26,7 +25,6 @@ import { asset, cn } from "@/lib/utils";
 const NAV = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/grades", label: "Grades", icon: GraduationCap },
-  { href: "/agenda", label: "Agenda", icon: NotebookPen },
   { href: "/schedule", label: "Schedule", icon: CalendarDays },
   { href: "/attendance", label: "Attendance", icon: CalendarCheck },
   { href: "/calendar", label: "Calendar", icon: CalendarRange },
@@ -35,7 +33,7 @@ const NAV = [
 ];
 
 const MOBILE_NAV = NAV.filter((n) =>
-  ["/dashboard", "/grades", "/agenda", "/schedule", "/settings"].includes(n.href),
+  ["/dashboard", "/grades", "/schedule", "/calendar", "/settings"].includes(n.href),
 );
 
 function Logo() {

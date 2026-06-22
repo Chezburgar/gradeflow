@@ -3,7 +3,6 @@
 import { useMemo, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useResource } from "@/components/DataProvider";
-import { useAgenda } from "@/store/agenda";
 import { PageHeader } from "@/components/PageHeader";
 import { Button, Card } from "@/components/ui";
 import { gradebookUpcoming } from "@/lib/upcoming";
@@ -28,7 +27,6 @@ function colorFor(type: string): string {
 export default function CalendarPage() {
   const cal = useResource("calendar");
   const gb = useResource("gradebook");
-  const agenda = useAgenda((s) => s.items);
   const [offset, setOffset] = useState(0);
   const [selected, setSelected] = useState(todayISO());
 
@@ -41,14 +39,11 @@ export default function CalendarPage() {
       const d = parseDate(e.date);
       if (d) push(toISODate(d), { title: e.title, type: e.type, color: colorFor(e.type) });
     }
-    for (const a of agenda) {
-      if (a.due) push(a.due, { title: a.title, type: a.type, color: colorFor(a.type) });
-    }
     for (const u of gradebookUpcoming(gb.data ?? null)) {
       push(u.dueISO, { title: u.title, type: u.type, color: colorFor(u.type) });
     }
     return map;
-  }, [cal.data, agenda, gb.data]);
+  }, [cal.data, gb.data]);
 
   const base = useMemo(() => {
     const d = new Date();

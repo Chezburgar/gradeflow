@@ -7,10 +7,10 @@ import {
   ArrowLeft,
   ArrowRight,
   CalendarCheck,
+  Calculator,
   Check,
   Loader2,
   MapPin,
-  NotebookPen,
   Palette,
   School,
   Search,
@@ -26,8 +26,8 @@ import { asset } from "@/lib/utils";
 import type { District } from "@/lib/studentvue/types";
 
 const FEATURES = [
-  { icon: Palette, title: "Make it yours", text: "8 themes, custom accents, fonts, layouts." },
-  { icon: NotebookPen, title: "Agenda book", text: "Plan homework, tests & reminders in one place." },
+  { icon: Palette, title: "Make it yours", text: "16 themes, custom accents, fonts, layouts." },
+  { icon: Calculator, title: "What-if & semesters", text: "Project grades and see semester averages." },
   { icon: CalendarCheck, title: "Everything synced", text: "Grades, attendance, schedule & documents." },
 ];
 

@@ -24,7 +24,6 @@ interface SettingsState {
   glass: boolean;
   animations: boolean;
   gradeDisplay: GradeDisplay;
-  showWeekend: boolean;
   widgets: WidgetConfig[];
   hydrated: boolean;
 
@@ -36,7 +35,6 @@ interface SettingsState {
   setGlass: (v: boolean) => void;
   setAnimations: (v: boolean) => void;
   setGradeDisplay: (g: GradeDisplay) => void;
-  setShowWeekend: (v: boolean) => void;
   toggleWidget: (id: WidgetId) => void;
   moveWidget: (id: WidgetId, dir: -1 | 1) => void;
   resetAll: () => void;
@@ -51,7 +49,6 @@ const DEFAULTS = {
   glass: true,
   animations: true,
   gradeDisplay: "both" as GradeDisplay,
-  showWeekend: false,
   widgets: DEFAULT_WIDGETS,
 };
 
@@ -69,7 +66,6 @@ export const useSettings = create<SettingsState>()(
       setGlass: (glass) => set({ glass }),
       setAnimations: (animations) => set({ animations }),
       setGradeDisplay: (gradeDisplay) => set({ gradeDisplay }),
-      setShowWeekend: (showWeekend) => set({ showWeekend }),
 
       toggleWidget: (id) =>
         set({

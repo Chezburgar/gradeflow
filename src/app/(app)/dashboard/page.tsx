@@ -8,8 +8,6 @@ import {
   ChevronRight,
   Clock,
   GraduationCap,
-  NotebookPen,
-  Sparkles,
   TrendingUp,
 } from "lucide-react";
 import { useResource } from "@/components/DataProvider";
@@ -19,7 +17,6 @@ import { MarkPill, SemesterTag } from "@/components/grade-bits";
 import { PageHeader } from "@/components/PageHeader";
 import { Card, CardHeader, GradeRing, Skeleton } from "@/components/ui";
 import { useSettings } from "@/store/settings";
-import { useAgenda } from "@/store/agenda";
 import { useSession } from "@/store/session";
 import {
   gradeVar,
@@ -45,7 +42,6 @@ export default function DashboardPage() {
   const gb = useResource("gradebook");
   const att = useResource("attendance");
   const widgets = useSettings((s) => s.widgets);
-  const agenda = useAgenda((s) => s.items);
   const student = useSession((s) => s.student);
 
   const greeting = (() => {
@@ -89,7 +85,6 @@ export default function DashboardPage() {
                   key={w.id}
                   id={w.id}
                   gradebook={gradebook}
-                  agenda={agenda}
                   attendance={att.data}
                 />
               ))}
@@ -103,12 +98,10 @@ export default function DashboardPage() {
 function Widget({
   id,
   gradebook,
-  agenda,
   attendance,
 }: {
   id: WidgetId;
   gradebook: Gradebook;
-  agenda: ReturnType<typeof useAgenda.getState>["items"];
   attendance: import("@/lib/studentvue/types").Attendance | null;
 }) {
   switch (id) {
@@ -117,9 +110,7 @@ function Widget({
     case "courses":
       return <CoursesWidget gradebook={gradebook} />;
     case "upcoming":
-      return <UpcomingWidget gradebook={gradebook} agenda={agenda} />;
-    case "agenda":
-      return <AgendaWidget agenda={agenda} />;
+      return <UpcomingWidget gradebook={gradebook} />;
     case "attendance":
       return <AttendanceWidget attendance={attendance} />;
     case "trend":
@@ -242,28 +233,11 @@ function CoursesWidget({ gradebook }: { gradebook: Gradebook }) {
   );
 }
 
-function UpcomingWidget({
-  gradebook,
-  agenda,
-}: {
-  gradebook: Gradebook;
-  agenda: ReturnType<typeof useAgenda.getState>["items"];
-}) {
-  const items = buildUpcoming(gradebook, agenda, { horizon: 14 }).slice(0, 6);
+function UpcomingWidget({ gradebook }: { gradebook: Gradebook }) {
+  const items = buildUpcoming(gradebook, { horizon: 14 }).slice(0, 6);
   return (
     <Card className="overflow-hidden pb-3">
-      <CardHeader
-        title="Upcoming"
-        icon={<Clock size={16} />}
-        action={
-          <Link
-            href="/agenda"
-            className="flex items-center gap-1 text-xs font-medium text-accent hover:underline"
-          >
-            Agenda <ArrowRight size={13} />
-          </Link>
-        }
-      />
+      <CardHeader title="Upcoming" icon={<Clock size={16} />} />
       {items.length === 0 ? (
         <p className="px-5 py-6 text-center text-sm text-muted">
           Nothing due in the next two weeks. 🎉
@@ -284,49 +258,6 @@ function UpcomingWidget({
                 {relativeDay(i.dueISO)}
               </span>
             </div>
-          ))}
-        </div>
-      )}
-    </Card>
-  );
-}
-
-function AgendaWidget({
-  agenda,
-}: {
-  agenda: ReturnType<typeof useAgenda.getState>["items"];
-}) {
-  const items = buildUpcoming(null, agenda, {
-    includeGradebook: false,
-    horizon: 1,
-  });
-  return (
-    <Card className="overflow-hidden pb-3">
-      <CardHeader title="Today & tomorrow" icon={<NotebookPen size={16} />} />
-      {items.length === 0 ? (
-        <div className="px-5 py-6 text-center text-sm text-muted">
-          No agenda items.{" "}
-          <Link href="/agenda" className="font-medium text-accent hover:underline">
-            Add one →
-          </Link>
-        </div>
-      ) : (
-        <div className="mt-3 space-y-1 px-3">
-          {items.map((i) => (
-            <Link
-              key={i.id}
-              href="/agenda"
-              className="flex items-center gap-3 rounded-[var(--radius-soft)] px-2 py-2 hover:bg-surface-2"
-            >
-              <span
-                className="h-2 w-2 shrink-0 rounded-full"
-                style={{ background: TYPE_DOT[i.type] ?? "var(--accent)" }}
-              />
-              <span className="min-w-0 flex-1 truncate text-sm">{i.title}</span>
-              <span className="text-xs font-medium text-muted">
-                {relativeDay(i.dueISO)}
-              </span>
-            </Link>
           ))}
         </div>
       )}

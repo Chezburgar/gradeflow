@@ -7,7 +7,7 @@ import { asset } from "@/lib/utils";
 export const metadata: Metadata = {
   title: { default: "GradeFlow", template: "%s · GradeFlow" },
   description:
-    "A cooler, fully customizable StudentVUE grade viewer — with a built-in student agenda book.",
+    "A cooler, fully customizable StudentVUE grade viewer with a what-if calculator and semester grades.",
   applicationName: "GradeFlow",
   manifest: asset("/manifest.webmanifest"),
   appleWebApp: { capable: true, title: "GradeFlow", statusBarStyle: "black-translucent" },

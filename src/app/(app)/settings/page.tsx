@@ -136,7 +136,7 @@ export default function SettingsPage() {
 
         {/* Grades */}
         <Card className="pb-5">
-          <CardHeader title="Grades & agenda" icon={<GraduationCap size={16} />} />
+          <CardHeader title="Grades" icon={<GraduationCap size={16} />} />
           <div className="mt-4 space-y-4 px-5">
             <Row label="Grade display">
               <Segmented
@@ -149,9 +149,6 @@ export default function SettingsPage() {
                 ]}
               />
             </Row>
-            <Row label="Show weekends in week view">
-              <Toggle checked={s.showWeekend} onChange={s.setShowWeekend} />
-            </Row>
           </div>
         </Card>
 
@@ -161,7 +158,8 @@ export default function SettingsPage() {
           <p className="px-5 pt-1 text-xs text-muted">Toggle and reorder the cards on your dashboard.</p>
           <div className="mt-3 space-y-2 px-5">
             {s.widgets.map((w, i) => {
-              const meta = ALL_WIDGETS.find((m) => m.id === w.id)!;
+              const meta = ALL_WIDGETS.find((m) => m.id === w.id);
+              if (!meta) return null;
               return (
                 <div key={w.id} className="flex items-center gap-3 rounded-[var(--radius-soft)] bg-surface-2 p-3">
                   <div className="flex flex-col">
